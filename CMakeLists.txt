@@ -9,17 +9,29 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+
 
 # executable that uses SensorNode, ImuSensor, Sensor, SensorFactory
 add_executable(sensor_node
   src/SensorNode.cpp
   src/ImuSensor.cpp
   src/RangeSensor.cpp
+  src/ProcessingPipeline.cpp
+  src/ThresholdValidator.cpp
+  src/LowPassFilter.cpp
+  src/SensorFactory.cpp
+  src/main.cpp
 )
 target_include_directories(sensor_node PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include/sensor_pipeline_cpp
 )
-ament_target_dependencies(sensor_node rclcpp std_msgs)
+target_link_libraries(sensor_node PUBLIC
+      ${sensor_msgs_TARGETS}
+      ${std_msgs_TARGETS}
+      rclcpp::rclcpp
+      sensor_msgs::sensor_msgs_library
+    )
 
 # install
 install(TARGETS sensor_node
